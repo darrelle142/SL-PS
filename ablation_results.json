@@ -1,0 +1,287 @@
+{
+  "architecture_variants": {
+    "Full SL-PS (Proposed)": {
+      "mean_latency": 11.034585109155689,
+      "std_latency": 0.6991784870764931,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "mean_decision_ms": 0.3771203705885758
+    },
+    "w/o Spectral Bellman (Priority-Only)": {
+      "mean_latency": 11.776315244636034,
+      "std_latency": 3.1476793145901625,
+      "mean_steps": 8.566666666666666,
+      "braess_trap_rate": 33.33333333333333,
+      "total_traps_taken": 2,
+      "mean_decision_ms": 0.38021245377015045
+    },
+    "w/o SLEM Modulation (Fixed beta)": {
+      "mean_latency": 11.034585109155689,
+      "std_latency": 0.6991784870764931,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "mean_decision_ms": 0.42015296445849043
+    },
+    "Forward-Only Priority (alpha=0.0)": {
+      "mean_latency": 11.056827684960275,
+      "std_latency": 0.6898417384651925,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "mean_decision_ms": 0.43340370153870295
+    },
+    "Backward-Only Priority (alpha=1.0)": {
+      "mean_latency": 11.167482517364077,
+      "std_latency": 0.7206777538280982,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "mean_decision_ms": 0.41374852018499814
+    },
+    "Standard-PS Baseline (K=15)": {
+      "mean_latency": 12.420554941456954,
+      "std_latency": 3.6169867282270696,
+      "mean_steps": 8.566666666666666,
+      "braess_trap_rate": 50.0,
+      "total_traps_taken": 4,
+      "mean_decision_ms": 0.2908984453739881
+    }
+  },
+  "alpha_sweep": {
+    "0.0": {
+      "mean_latency": 11.056827684960275,
+      "std_latency": 0.6898417384651925,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "mean_decision_ms": 0.40864777811630454
+    },
+    "0.2": {
+      "mean_latency": 11.062465642446345,
+      "std_latency": 0.7074986527901598,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "mean_decision_ms": 0.4288022236087946
+    },
+    "0.4": {
+      "mean_latency": 11.027050960461766,
+      "std_latency": 0.6892611907834908,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "mean_decision_ms": 0.4149703705614364
+    },
+    "0.5": {
+      "mean_latency": 11.034585109155689,
+      "std_latency": 0.6991784870764931,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "mean_decision_ms": 0.5250796285475156
+    },
+    "0.6": {
+      "mean_latency": 11.07356428513193,
+      "std_latency": 0.7191349205265798,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "mean_decision_ms": 0.3814459226473614
+    },
+    "0.8": {
+      "mean_latency": 11.050186262117164,
+      "std_latency": 0.7041993164334753,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "mean_decision_ms": 0.38620148078297023
+    },
+    "1.0": {
+      "mean_latency": 11.167482517364077,
+      "std_latency": 0.7206777538280982,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "mean_decision_ms": 0.37815777705637393
+    }
+  },
+  "eta_sweep": {
+    "0.01": {
+      "mean_latency": 10.980913033460206,
+      "std_latency": 1.0545381551524529,
+      "mean_steps": 8.833333333333334,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "mean_decision_ms": 0.37713924550258043
+    },
+    "0.05": {
+      "mean_latency": 11.042014474685976,
+      "std_latency": 0.6882089999211264,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "mean_decision_ms": 0.3752392585199602
+    },
+    "0.1": {
+      "mean_latency": 11.034585109155689,
+      "std_latency": 0.6991784870764931,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "mean_decision_ms": 0.3914144444193139
+    },
+    "0.2": {
+      "mean_latency": 11.048794505154586,
+      "std_latency": 0.7173240552868456,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "mean_decision_ms": 0.45227222338629264
+    },
+    "0.5": {
+      "mean_latency": 11.02556785997022,
+      "std_latency": 0.6795404196894633,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "mean_decision_ms": 0.3842588891361461
+    },
+    "1.0": {
+      "mean_latency": 11.122727089409896,
+      "std_latency": 0.6695303381255953,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "mean_decision_ms": 0.4091803695903056
+    }
+  },
+  "budget_sweep": {
+    "K": [
+      0,
+      5,
+      10,
+      15,
+      30,
+      50,
+      100
+    ],
+    "std_ps": [
+      {
+        "mean_latency": 11.31239254380037,
+        "std_latency": 0.6485393190647937,
+        "mean_steps": 9.0,
+        "braess_trap_rate": 0.0,
+        "total_traps_taken": 0,
+        "mean_decision_ms": 0.14053333606743426
+      },
+      {
+        "mean_latency": 11.149283899339757,
+        "std_latency": 1.2349417811312706,
+        "mean_steps": 8.566666666666666,
+        "braess_trap_rate": 0.0,
+        "total_traps_taken": 0,
+        "mean_decision_ms": 0.19331323073502876
+      },
+      {
+        "mean_latency": 11.443188625758951,
+        "std_latency": 1.9989334182730354,
+        "mean_steps": 8.566666666666666,
+        "braess_trap_rate": 20.0,
+        "total_traps_taken": 1,
+        "mean_decision_ms": 0.2581221783073467
+      },
+      {
+        "mean_latency": 12.420554941456954,
+        "std_latency": 3.6169867282270696,
+        "mean_steps": 8.566666666666666,
+        "braess_trap_rate": 50.0,
+        "total_traps_taken": 4,
+        "mean_decision_ms": 0.2737607012397758
+      },
+      {
+        "mean_latency": 11.54409202801866,
+        "std_latency": 2.4684369712191843,
+        "mean_steps": 8.566666666666666,
+        "braess_trap_rate": 25.0,
+        "total_traps_taken": 2,
+        "mean_decision_ms": 0.4289225686037123
+      },
+      {
+        "mean_latency": 11.608987823083575,
+        "std_latency": 2.4602825994939885,
+        "mean_steps": 8.6,
+        "braess_trap_rate": 28.57142857142857,
+        "total_traps_taken": 2,
+        "mean_decision_ms": 0.5692523293189935
+      },
+      {
+        "mean_latency": 11.608987823083575,
+        "std_latency": 2.4602825994939885,
+        "mean_steps": 8.6,
+        "braess_trap_rate": 28.57142857142857,
+        "total_traps_taken": 2,
+        "mean_decision_ms": 0.8100515507638107
+      }
+    ],
+    "sl_ps": [
+      {
+        "mean_latency": 11.258563854060023,
+        "std_latency": 0.7592796712454849,
+        "mean_steps": 9.0,
+        "braess_trap_rate": 0.0,
+        "total_traps_taken": 0,
+        "mean_decision_ms": 0.20117814743166995
+      },
+      {
+        "mean_latency": 11.189857630305006,
+        "std_latency": 0.7531955470054484,
+        "mean_steps": 9.0,
+        "braess_trap_rate": 0.0,
+        "total_traps_taken": 0,
+        "mean_decision_ms": 0.288773703613077
+      },
+      {
+        "mean_latency": 11.060005473299931,
+        "std_latency": 0.7063996918969259,
+        "mean_steps": 9.0,
+        "braess_trap_rate": 0.0,
+        "total_traps_taken": 0,
+        "mean_decision_ms": 0.5596388877300477
+      },
+      {
+        "mean_latency": 11.034585109155689,
+        "std_latency": 0.6991784870764931,
+        "mean_steps": 9.0,
+        "braess_trap_rate": 0.0,
+        "total_traps_taken": 0,
+        "mean_decision_ms": 0.3909792600165087
+      },
+      {
+        "mean_latency": 11.058033861909223,
+        "std_latency": 0.70267530018742,
+        "mean_steps": 9.0,
+        "braess_trap_rate": 0.0,
+        "total_traps_taken": 0,
+        "mean_decision_ms": 0.6030159267269213
+      },
+      {
+        "mean_latency": 11.079799070117229,
+        "std_latency": 1.0510390896292678,
+        "mean_steps": 8.833333333333334,
+        "braess_trap_rate": 0.0,
+        "total_traps_taken": 0,
+        "mean_decision_ms": 0.884857733584589
+      },
+      {
+        "mean_latency": 11.143327597198914,
+        "std_latency": 0.7150978166168139,
+        "mean_steps": 9.0,
+        "braess_trap_rate": 0.0,
+        "total_traps_taken": 0,
+        "mean_decision_ms": 1.2634807410736189
+      }
+    ]
+  }
+}

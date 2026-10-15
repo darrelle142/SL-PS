@@ -387,13 +387,19 @@ class SLPSAgent:
         backup_budget: int = 15,
         gamma: float = 0.95,
         eta: float = 0.1,
-        beta_scale: float = 5.0
+        beta_scale: float = 5.0,
+        use_spectral_bellman: bool = True,
+        use_slem: bool = True,
+        alpha: float = 0.5
     ):
         self.env = env
         self.K = backup_budget
         self.gamma = gamma
         self.eta = eta
         self.beta_scale = beta_scale
+        self.use_spectral_bellman = use_spectral_bellman
+        self.use_slem = use_slem
+        self.alpha = alpha
         self.name = "SL-PS (Proposed)"
 
         # Value function initialized with base grid potential distance
@@ -511,7 +517,7 @@ class SLPSAgent:
         for a in valid:
             nxt, cost = self._get_transition(state, a)
             nxt_idx = self.env.grid.node_to_idx[nxt]
-            spectral_penalty = beta * Phi_spec[nxt_idx]
+            spectral_penalty = (beta * Phi_spec[nxt_idx]) if self.use_spectral_bellman else 0.0
 
             q_val = cost + self.gamma * self.V[nxt] + spectral_penalty
             if q_val < min_q:
@@ -528,7 +534,7 @@ class SLPSAgent:
         Phi_spec = self.compute_spectral_congestion_field()
 
         # 2. Modulate penalty weight by SLEM sigma = |lambda_2|
-        beta = self.beta_scale * (1.0 + self.slem)
+        beta = self.beta_scale * (1.0 + self.slem) if self.use_slem else self.beta_scale
 
         # 3. Compute topological residuals
         num_n = self.env.grid.num_nodes
@@ -542,8 +548,10 @@ class SLPSAgent:
                 u_idx = self.env.grid.node_to_idx[s]
                 xi[u_idx] = abs(target - self.V[s])
 
-        # Diffuse priority keys through in-Laplacian to prioritize upstream predecessors
+        # Diffuse priority keys through bi-directional Laplacian Green operators
+        f_out = self.G_out @ (xi + Phi_spec)
         f_in = self.G_in @ (xi + Phi_spec)
+        tau = (1.0 - self.alpha) * f_out + self.alpha * f_in
 
         heap = []
         counter = 0
@@ -554,7 +562,7 @@ class SLPSAgent:
                     continue
                 u_idx = self.env.grid.node_to_idx[s]
                 if xi[u_idx] > 1e-4:
-                    priority = xi[u_idx] + beta * f_in[u_idx]
+                    priority = xi[u_idx] + beta * tau[u_idx]
                     heapq.heappush(heap, (-priority, counter, s))
                     counter += 1
 
@@ -586,14 +594,14 @@ class SLPSAgent:
                 p_idx = self.env.grid.node_to_idx[p]
                 p_diff = abs(p_target - self.V[p])
                 if p_diff > 1e-4:
-                    p_prio = p_diff + beta * f_in[p_idx]
+                    p_prio = p_diff + beta * tau[p_idx]
                     heapq.heappush(heap, (-p_prio, counter, p))
                     counter += 1
 
     def select_action(self, state: Tuple[int, int], active_chord: Optional[Tuple] = None) -> int:
         self.plan()
         Phi_spec = self.compute_spectral_congestion_field()
-        beta = self.beta_scale * (1.0 + self.slem)
+        beta = self.beta_scale * (1.0 + self.slem) if self.use_slem else self.beta_scale
         _, best_a = self._compute_spectral_bellman_target(state, Phi_spec, beta)
         return best_a
 
@@ -601,12 +609,12 @@ class SLPSAgent:
         """Returns detailed Q-value decomposition including spectral risk for all valid actions."""
         valid = self.env.get_valid_actions(state)
         Phi_spec = self.compute_spectral_congestion_field()
-        beta = self.beta_scale * (1.0 + self.slem)
+        beta = self.beta_scale * (1.0 + self.slem) if self.use_slem else self.beta_scale
         breakdown = {}
         for a in valid:
             nxt, cost = self._get_transition(state, a)
             nxt_idx = self.env.grid.node_to_idx[nxt]
-            spec_pen = float(beta * Phi_spec[nxt_idx])
+            spec_pen = float(beta * Phi_spec[nxt_idx]) if self.use_spectral_bellman else 0.0
             q_val = cost + self.gamma * self.V[nxt] + spec_pen
             breakdown[a] = {
                 "cost": cost,
@@ -621,7 +629,7 @@ class SLPSAgent:
         """Returns optimal greedy action under T_SL for all nodes on grid."""
         pol = {}
         Phi_spec = self.compute_spectral_congestion_field()
-        beta = self.beta_scale * (1.0 + self.slem)
+        beta = self.beta_scale * (1.0 + self.slem) if self.use_slem else self.beta_scale
         for i in range(self.env.m + 1):
             for j in range(self.env.n + 1):
                 s = (i, j)

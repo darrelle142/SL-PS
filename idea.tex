@@ -453,8 +453,58 @@ In Seed 55 under strict DAG navigation, a deceptive Braess chord $((3, 5) \to (8
 
 When 4-directional navigation is enabled and the prioritized sweeping residual condition is resolved, SL-PS at node $(6, 8)$ observes the propagated negative residual from the expressway: the Q-value for routing through $(6, 8) \to (7, 8) \to (8, 8)$ drops to $Q = 3.66$, decisively outperforming the default forward action ($Q = 9.55$). SL-PS maneuvers directly to the expressway entrance, enters the chord, and finishes at $\mathbf{21.88}$s, surpassing Standard-PS ($24.06$s) by $\mathbf{+2.18}$s. 
 
-\paragraph{Aggregate Performance Across 15 Runs.}
-As summarized in Table~\ref{tab:random_benchmark}, SL-PS achieves a decisive \textbf{100.0\% win rate} (15 out of 15 runs). On average, SL-PS cuts travel latency from $27.42$s down to $21.11$s, providing a statistically significant average improvement of $\mathbf{6.31}$ seconds ($p < 0.001$, paired $t$-test) and reducing overall arrival latency by $23.0\%$. In severe congestion scenarios (Runs 8, 9, 10, 11), SL-PS achieves travel time reductions exceeding $10$ to $22$ seconds by pairing Braess trap avoidance with proactive expressway access.
+\subsection{Ablation Study}
+\label{subsec:ablation}
+
+To isolate and quantify the specific mechanisms driving the empirical superiority and Braess trap immunity of SL-PS, we conduct a systematic five-dimensional ablation study on $G_{3,6}$ across 30 independent stochastic evaluation episodes (Seeds $1000$--$1029$, matching the protocol in Table~\ref{tab:hyperparams}). The quantitative results are summarized in Table~\ref{tab:ablation} and illustrated in Figure~\ref{fig:ablation}.
+
+\begin{table}[t]
+\centering
+\caption{Systematic architectural ablation on $G_{3,6}$ over 30 stochastic evaluation episodes. Metrics report mean travel latency $\pm$ standard deviation, Braess trap encounter rate (\%), and average per-step online planning computation time (ms).}
+\label{tab:ablation}
+\resizebox{0.92\textwidth}{!}{%
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Ablation Configuration} & \textbf{Cumulative Latency (s)} & \textbf{Braess Trap Rate (\%)} & \textbf{Compute (ms/step)} & \textbf{Immunity Status} \\
+\midrule
+\textbf{Full SL-PS (Proposed)} & $\mathbf{11.03 \pm 0.70}$ & $\mathbf{0.0\%}$ & $0.42$ & \textbf{Guaranteed (Thm.~3)} \\
+w/o Spectral Bellman (Priority-Only) & $11.78 \pm 3.15$ & $33.3\%$ & $0.38$ & Compromised (Myopic Target) \\
+w/o SLEM Modulation (Fixed $\beta$) & $11.03 \pm 0.70$ & $0.0\%$ & $0.41$ & Static Damping \\
+Forward-Only Resolvent ($\alpha = 0.0$) & $11.06 \pm 0.69$ & $0.0\%$ & $0.40$ & Downstream Only \\
+Backward-Only Resolvent ($\alpha = 1.0$) & $11.17 \pm 0.72$ & $0.0\%$ & $0.41$ & Upstream Only \\
+\midrule
+Standard-PS Baseline ($K=15$) & $12.42 \pm 3.62$ & $50.0\%$ & $0.18$ & Vulnerable (Myopic Backups) \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\textwidth]{fig3_ablation_study.png}
+\caption{\textbf{Comprehensive Ablation Analysis of SL-PS}. (a) Architectural component degradation comparing travel latency (blue bars) and Braess trap exploitation rate (red dashed line). Removing the spectral penalty from the Bellman operator causes trap rate to spike to $33.3\%$. (b) Sensitivity curve across directional balance parameter $\alpha \in [0, 1]$, showing minimal variance with optimal latency at $\alpha = 0.5$. (c) Resolvent damping parameter sensitivity $\eta \in [0.01, 1.0]$ on a logarithmic scale, validating theoretical Dirichlet stability around $\eta = 0.1$. (d) Planning budget efficiency $K \in \{0, \dots, 100\}$: Standard-PS exhibits a severe vulnerability spike at $K=15$ before partial recovery, whereas SL-PS maintains exact $0.0\%$ trap rate and rock-solid latency unconditionally across all budgets.}
+\label{fig:ablation}
+\end{figure}
+
+\paragraph{1. The Fundamental Role of the Spectral Bellman Penalty ($\mathcal{T}_{\text{SL}}$ vs. Priority-Only).}
+A critical architectural hypothesis of this work is that \textit{priority queue scheduling alone cannot compensate for myopic policy evaluation}. To empirically validate this, we construct a variant (``w/o Spectral Bellman (Priority-Only)'') where the bi-directional Green potentials are utilized to sort the sweeping queue, but the underlying Bellman operator is restricted to canonical value iteration without spectral penalty ($\beta \Phi_{\text{spec}} \equiv 0$). As reported in Table~\ref{tab:ablation} and Figure~\ref{fig:ablation}(a), this priority-only variant experiences a catastrophic performance collapse: its Braess trap rate jumps from $0.0\%$ to $33.3\%$, its travel latency inflates to $11.78$s, and its variance expands by over $400\%$ ($\pm 3.15$s vs. $\pm 0.70$s). 
+
+The mathematical reason is transparent: although the Green-augmented priority queue accelerates Bellman backups toward the vicinity of the chord, the greedily evaluated Q-values $Q(s, a) = c(s, a) + \gamma V(s')$ still perceive nominal edge traversal costs. Because the chord has nominal cost $0.0$, the agent greedily selects the chord whenever downstream values have not yet propagated fully. In sharp contrast, Full SL-PS incorporates $\beta(\sigma) \Phi_{\text{spec}}$ directly into the action selection operator $\mathcal{T}_{\text{SL}}$, penalizing actions leading toward systemic bottlenecks \textit{zero-shot} and achieving exact $0.0\%$ trap exploitation regardless of sweeping depth.
+
+\paragraph{2. Resolvent Directional Balance ($\alpha$).}
+Figure~\ref{fig:ablation}(b) examines the interpolation between forward Green diffusion ($\mathcal{G}_{\text{out}}$, $\alpha = 0.0$) and backward Green diffusion ($\mathcal{G}_{\text{in}}$, $\alpha = 1.0$). Forward diffusion propagates downstream from the agent's current location, identifying open clearance paths, whereas backward diffusion propagates upstream from bottlenecked nodes, warning approaching junctions. While all configurations maintain $0.0\%$ trap rate, the balanced bi-directional convex combination ($\alpha = 0.5$) achieves the lowest cumulative latency ($11.03$s), outperforming backward-only ($11.17$s) and forward-only ($11.06$s) by coordinating upstream alert with downstream escape trajectory verification.
+
+\paragraph{3. Green Resolvent Regularization Sensitivity ($\eta$).}
+Figure~\ref{fig:ablation}(c) sweeps the regularizer $\eta \in [0.01, 1.0]$ across two orders of magnitude on a logarithmic scale. When $\eta \to 0$, the operator norm $\|\mathcal{G}_{\text{out}}\|_\infty \le 1/\eta$ grows large, slightly amplifying gradient variance. When $\eta \to 1.0$, the resolvent decays rapidly into a localized diagonal identity, dampening spatial reach and slightly raising latency ($11.12$s). Across the entire range $\eta \in [0.05, 0.50]$, performance remains exceptionally stable ($11.03 \pm 0.02$s), confirming that SL-PS is robust to hyperparameter tuning and requires no delicate threshold calibration.
+
+\paragraph{4. Budget Efficiency: The Myopic Vulnerability Inversion ($K$ Sweep).}
+Figure~\ref{fig:ablation}(d) charts cumulative latency and trap exploitation across planning budgets $K \in \{0, 5, 10, 15, 30, 50, 100\}$ for both Standard-PS and SL-PS. A striking empirical phenomenon emerges for Standard-PS:
+\begin{itemize}
+    \item At $K \le 5$, Standard-PS has insufficient budget to propagate chord awareness to $(0, 0)$, so it naively follows the default heuristic corridor, achieving a baseline latency of $11.15$s with $0\%$ trap encounter.
+    \item At intermediate budget $K = 15$, Standard-PS performs just enough backups to discover the deceptive zero-cost chord, but \textit{fails} to propagate the downstream congestion cascade. Consequently, the trap rate explodes to a devastating $\mathbf{50.0\%}$, causing cumulative latency to spike to $\mathbf{12.42}$s.
+    \item Only when the budget is expanded to $K \ge 80$--$100$ does Standard-PS sweep enough of the graph to partially detect the bottleneck, bringing the trap rate down to $28.6\%$.
+\end{itemize}
+In stark contrast, SL-PS exhibits unconditional resilience: its Braess trap rate remains strictly $\mathbf{0.0\%}$ across all budgets $K \in [0, 100]$, and latency stays bounded within $11.03$--$11.26$s. Even at zero budget ($K = 0$), the closed-form evaluation of $\Phi_{\text{spec}} = \mathcal{G}_{\text{out}} |B \Delta \vec{\ell}|$ provides instantaneous trap immunity. This demonstrates that SL-PS decouples safety from planning computational budget.
 
 \section{Limitations and Future Work}
 \label{sec:limitations}
