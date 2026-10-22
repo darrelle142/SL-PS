@@ -118,9 +118,21 @@ class StandardPrioritizedSweepingAgent:
         valid = self.env.get_valid_actions(state)
         min_q = float("inf")
         best_act = valid[0]
+        slip = getattr(self.env, "slip_prob", 0.0)
+
         for a in valid:
-            nxt, cost = self._get_transition(state, a)
-            q_val = cost + self.gamma * self.V[nxt]
+            cardinal_alts = [alt for alt in valid if alt != CongestedGridEnv.ACTION_CHORD and alt != a]
+            if slip > 0.0 and a != CongestedGridEnv.ACTION_CHORD and len(cardinal_alts) > 0:
+                nxt_main, cost_main = self._get_transition(state, a)
+                q_val = (1.0 - slip) * (cost_main + self.gamma * self.V[nxt_main])
+                slip_share = slip / len(cardinal_alts)
+                for alt_a in cardinal_alts:
+                    nxt_alt, cost_alt = self._get_transition(state, alt_a)
+                    q_val += slip_share * (cost_alt + self.gamma * self.V[nxt_alt])
+            else:
+                nxt, cost = self._get_transition(state, a)
+                q_val = cost + self.gamma * self.V[nxt]
+
             if q_val < min_q:
                 min_q = q_val
                 best_act = a
@@ -183,13 +195,29 @@ class StandardPrioritizedSweepingAgent:
     def get_q_breakdown(self, state: Tuple[int, int]) -> Dict[int, Dict[str, float]]:
         """Returns detailed Q-value decomposition for all valid actions at state."""
         valid = self.env.get_valid_actions(state)
+        slip = getattr(self.env, "slip_prob", 0.0)
         breakdown = {}
         for a in valid:
-            nxt, cost = self._get_transition(state, a)
-            q_val = cost + self.gamma * self.V[nxt]
+            cardinal_alts = [alt for alt in valid if alt != CongestedGridEnv.ACTION_CHORD and alt != a]
+            if slip > 0.0 and a != CongestedGridEnv.ACTION_CHORD and len(cardinal_alts) > 0:
+                nxt_main, cost_main = self._get_transition(state, a)
+                expected_cost = (1.0 - slip) * cost_main
+                expected_future_v = (1.0 - slip) * self.gamma * self.V[nxt_main]
+                slip_share = slip / len(cardinal_alts)
+                for alt_a in cardinal_alts:
+                    nxt_alt, cost_alt = self._get_transition(state, alt_a)
+                    expected_cost += slip_share * cost_alt
+                    expected_future_v += slip_share * self.gamma * self.V[nxt_alt]
+                q_val = expected_cost + expected_future_v
+                nxt = nxt_main
+            else:
+                nxt, cost = self._get_transition(state, a)
+                expected_cost = cost
+                expected_future_v = self.gamma * self.V[nxt]
+                q_val = cost + self.gamma * self.V[nxt]
             breakdown[a] = {
-                "cost": cost,
-                "future_v": self.gamma * self.V[nxt],
+                "cost": expected_cost,
+                "future_v": expected_future_v,
                 "spectral_penalty": 0.0,
                 "total_q": q_val,
                 "next_state": nxt
@@ -309,9 +337,21 @@ class GTAPrioritizedSweepingAgent:
         valid = self.env.get_valid_actions(state)
         min_q = float("inf")
         best_act = valid[0]
+        slip = getattr(self.env, "slip_prob", 0.0)
+
         for a in valid:
-            nxt, cost = self._get_transition(state, a)
-            q_val = cost + self.gamma * self.V[nxt]
+            cardinal_alts = [alt for alt in valid if alt != CongestedGridEnv.ACTION_CHORD and alt != a]
+            if slip > 0.0 and a != CongestedGridEnv.ACTION_CHORD and len(cardinal_alts) > 0:
+                nxt_main, cost_main = self._get_transition(state, a)
+                q_val = (1.0 - slip) * (cost_main + self.gamma * self.V[nxt_main])
+                slip_share = slip / len(cardinal_alts)
+                for alt_a in cardinal_alts:
+                    nxt_alt, cost_alt = self._get_transition(state, alt_a)
+                    q_val += slip_share * (cost_alt + self.gamma * self.V[nxt_alt])
+            else:
+                nxt, cost = self._get_transition(state, a)
+                q_val = cost + self.gamma * self.V[nxt]
+
             if q_val < min_q:
                 min_q = q_val
                 best_act = a
@@ -504,22 +544,37 @@ class SLPSAgent:
     def _compute_spectral_bellman_target(
         self, state: Tuple[int, int], Phi_spec: np.ndarray, beta: float
     ) -> Tuple[float, int]:
-        """
+        r"""
         Evaluates the Spectral-Laplacian Bellman Operator:
-        T_SL V(s) = min_a [ cost(s, a) + gamma * V(s') + beta * Phi_spec(s') ]
+        T_SL V(s) = min_a \sum_{s'} P(s'|s,a) [ cost(s, a, s') + gamma * V(s') + beta * Phi_spec(s') ]
         """
         if state == (self.env.m, self.env.n):
             return 0.0, 0
         valid = self.env.get_valid_actions(state)
         min_q = float("inf")
         best_act = valid[0]
+        slip = getattr(self.env, "slip_prob", 0.0)
 
         for a in valid:
-            nxt, cost = self._get_transition(state, a)
-            nxt_idx = self.env.grid.node_to_idx[nxt]
-            spectral_penalty = (beta * Phi_spec[nxt_idx]) if self.use_spectral_bellman else 0.0
+            cardinal_alts = [alt for alt in valid if alt != CongestedGridEnv.ACTION_CHORD and alt != a]
+            if slip > 0.0 and a != CongestedGridEnv.ACTION_CHORD and len(cardinal_alts) > 0:
+                nxt_main, cost_main = self._get_transition(state, a)
+                idx_main = self.env.grid.node_to_idx[nxt_main]
+                pen_main = (beta * Phi_spec[idx_main]) if self.use_spectral_bellman else 0.0
+                q_val = (1.0 - slip) * (cost_main + self.gamma * self.V[nxt_main] + pen_main)
 
-            q_val = cost + self.gamma * self.V[nxt] + spectral_penalty
+                slip_share = slip / len(cardinal_alts)
+                for alt_a in cardinal_alts:
+                    nxt_alt, cost_alt = self._get_transition(state, alt_a)
+                    idx_alt = self.env.grid.node_to_idx[nxt_alt]
+                    pen_alt = (beta * Phi_spec[idx_alt]) if self.use_spectral_bellman else 0.0
+                    q_val += slip_share * (cost_alt + self.gamma * self.V[nxt_alt] + pen_alt)
+            else:
+                nxt, cost = self._get_transition(state, a)
+                nxt_idx = self.env.grid.node_to_idx[nxt]
+                spectral_penalty = (beta * Phi_spec[nxt_idx]) if self.use_spectral_bellman else 0.0
+                q_val = cost + self.gamma * self.V[nxt] + spectral_penalty
+
             if q_val < min_q:
                 min_q = q_val
                 best_act = a
@@ -610,16 +665,43 @@ class SLPSAgent:
         valid = self.env.get_valid_actions(state)
         Phi_spec = self.compute_spectral_congestion_field()
         beta = self.beta_scale * (1.0 + self.slem) if self.use_slem else self.beta_scale
+        slip = getattr(self.env, "slip_prob", 0.0)
         breakdown = {}
         for a in valid:
-            nxt, cost = self._get_transition(state, a)
-            nxt_idx = self.env.grid.node_to_idx[nxt]
-            spec_pen = float(beta * Phi_spec[nxt_idx]) if self.use_spectral_bellman else 0.0
-            q_val = cost + self.gamma * self.V[nxt] + spec_pen
+            cardinal_alts = [alt for alt in valid if alt != CongestedGridEnv.ACTION_CHORD and alt != a]
+            if slip > 0.0 and a != CongestedGridEnv.ACTION_CHORD and len(cardinal_alts) > 0:
+                nxt_main, cost_main = self._get_transition(state, a)
+                idx_main = self.env.grid.node_to_idx[nxt_main]
+                pen_main = (beta * Phi_spec[idx_main]) if self.use_spectral_bellman else 0.0
+
+                expected_cost = (1.0 - slip) * cost_main
+                expected_future_v = (1.0 - slip) * self.gamma * self.V[nxt_main]
+                expected_penalty = (1.0 - slip) * pen_main
+
+                slip_share = slip / len(cardinal_alts)
+                for alt_a in cardinal_alts:
+                    nxt_alt, cost_alt = self._get_transition(state, alt_a)
+                    idx_alt = self.env.grid.node_to_idx[nxt_alt]
+                    pen_alt = (beta * Phi_spec[idx_alt]) if self.use_spectral_bellman else 0.0
+                    expected_cost += slip_share * cost_alt
+                    expected_future_v += slip_share * self.gamma * self.V[nxt_alt]
+                    expected_penalty += slip_share * pen_alt
+
+                q_val = expected_cost + expected_future_v + expected_penalty
+                nxt = nxt_main
+            else:
+                nxt, cost = self._get_transition(state, a)
+                nxt_idx = self.env.grid.node_to_idx[nxt]
+                spec_pen = float(beta * Phi_spec[nxt_idx]) if self.use_spectral_bellman else 0.0
+                expected_cost = cost
+                expected_future_v = self.gamma * self.V[nxt]
+                expected_penalty = spec_pen
+                q_val = cost + self.gamma * self.V[nxt] + spec_pen
+
             breakdown[a] = {
-                "cost": cost,
-                "future_v": self.gamma * self.V[nxt],
-                "spectral_penalty": spec_pen,
+                "cost": expected_cost,
+                "future_v": expected_future_v,
+                "spectral_penalty": expected_penalty,
                 "total_q": q_val,
                 "next_state": nxt
             }

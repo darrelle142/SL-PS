@@ -1,0 +1,188 @@
+{
+  "Standard-PS (K=15)": {
+    "0.0": {
+      "mean_latency": 12.420554941456954,
+      "std_latency": 3.6169867282270696,
+      "mean_steps": 8.566666666666666,
+      "braess_trap_rate": 50.0,
+      "total_traps_taken": 4,
+      "total_chords_encountered": 8,
+      "mean_decision_ms": 0.3159564180509821,
+      "mean_slips_per_ep": 0.0
+    },
+    "0.05": {
+      "mean_latency": 12.375292928479809,
+      "std_latency": 4.802048374190825,
+      "mean_steps": 8.2,
+      "braess_trap_rate": 45.45454545454545,
+      "total_traps_taken": 5,
+      "total_chords_encountered": 11,
+      "mean_decision_ms": 0.523086587569063,
+      "mean_slips_per_ep": 0.2
+    },
+    "0.1": {
+      "mean_latency": 12.088044509703535,
+      "std_latency": 4.164813506546826,
+      "mean_steps": 8.366666666666667,
+      "braess_trap_rate": 44.44444444444444,
+      "total_traps_taken": 4,
+      "total_chords_encountered": 9,
+      "mean_decision_ms": 0.5472756966770408,
+      "mean_slips_per_ep": 0.5
+    },
+    "0.15": {
+      "mean_latency": 13.099593227438838,
+      "std_latency": 4.707558289134497,
+      "mean_steps": 8.5,
+      "braess_trap_rate": 60.0,
+      "total_traps_taken": 6,
+      "total_chords_encountered": 10,
+      "mean_decision_ms": 0.5920419617848215,
+      "mean_slips_per_ep": 0.6
+    },
+    "0.2": {
+      "mean_latency": 13.07175020613821,
+      "std_latency": 4.706818379838649,
+      "mean_steps": 8.6,
+      "braess_trap_rate": 66.66666666666666,
+      "total_traps_taken": 6,
+      "total_chords_encountered": 9,
+      "mean_decision_ms": 0.5569077539528439,
+      "mean_slips_per_ep": 0.7666666666666667
+    },
+    "0.25": {
+      "mean_latency": 13.389736448756356,
+      "std_latency": 4.797330355633581,
+      "mean_steps": 8.766666666666667,
+      "braess_trap_rate": 87.5,
+      "total_traps_taken": 7,
+      "total_chords_encountered": 8,
+      "mean_decision_ms": 0.5541699624198981,
+      "mean_slips_per_ep": 1.0666666666666667
+    }
+  },
+  "Standard-PS (K=100)": {
+    "0.0": {
+      "mean_latency": 11.608987823083575,
+      "std_latency": 2.4602825994939885,
+      "mean_steps": 8.6,
+      "braess_trap_rate": 28.57142857142857,
+      "total_traps_taken": 2,
+      "total_chords_encountered": 7,
+      "mean_decision_ms": 0.5883875978901232,
+      "mean_slips_per_ep": 0.0
+    },
+    "0.05": {
+      "mean_latency": 10.529889443047209,
+      "std_latency": 1.6498049864740016,
+      "mean_steps": 8.266666666666667,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "total_chords_encountered": 6,
+      "mean_decision_ms": 1.2517016122376756,
+      "mean_slips_per_ep": 0.13333333333333333
+    },
+    "0.1": {
+      "mean_latency": 10.983404993114029,
+      "std_latency": 2.3242527580156915,
+      "mean_steps": 8.5,
+      "braess_trap_rate": 20.0,
+      "total_traps_taken": 1,
+      "total_chords_encountered": 5,
+      "mean_decision_ms": 1.3256462731435164,
+      "mean_slips_per_ep": 0.5
+    },
+    "0.15": {
+      "mean_latency": 11.293647612081626,
+      "std_latency": 2.076748054705134,
+      "mean_steps": 8.7,
+      "braess_trap_rate": 33.33333333333333,
+      "total_traps_taken": 1,
+      "total_chords_encountered": 3,
+      "mean_decision_ms": 1.254521838212707,
+      "mean_slips_per_ep": 0.6666666666666666
+    },
+    "0.2": {
+      "mean_latency": 11.31461699747956,
+      "std_latency": 2.0904343727307686,
+      "mean_steps": 8.6,
+      "braess_trap_rate": 25.0,
+      "total_traps_taken": 1,
+      "total_chords_encountered": 4,
+      "mean_decision_ms": 1.1931999998037206,
+      "mean_slips_per_ep": 0.8333333333333334
+    },
+    "0.25": {
+      "mean_latency": 11.271949948051976,
+      "std_latency": 2.0320223118803558,
+      "mean_steps": 8.733333333333333,
+      "braess_trap_rate": 33.33333333333333,
+      "total_traps_taken": 1,
+      "total_chords_encountered": 3,
+      "mean_decision_ms": 1.3389973281367276,
+      "mean_slips_per_ep": 1.0
+    }
+  },
+  "SL-PS (Proposed, K=15)": {
+    "0.0": {
+      "mean_latency": 11.065136540759992,
+      "std_latency": 0.7263184754928823,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "total_chords_encountered": 0,
+      "mean_decision_ms": 0.4281688891178756,
+      "mean_slips_per_ep": 0.0
+    },
+    "0.05": {
+      "mean_latency": 10.98807541050459,
+      "std_latency": 1.1436601091865632,
+      "mean_steps": 8.866666666666667,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "total_chords_encountered": 1,
+      "mean_decision_ms": 0.7496725566968798,
+      "mean_slips_per_ep": 0.26666666666666666
+    },
+    "0.1": {
+      "mean_latency": 11.093628542197195,
+      "std_latency": 0.740460764140834,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "total_chords_encountered": 0,
+      "mean_decision_ms": 0.8139151855613347,
+      "mean_slips_per_ep": 0.7666666666666667
+    },
+    "0.15": {
+      "mean_latency": 11.146334348297376,
+      "std_latency": 0.6732419135299681,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "total_chords_encountered": 0,
+      "mean_decision_ms": 0.6557944452786749,
+      "mean_slips_per_ep": 1.0333333333333334
+    },
+    "0.2": {
+      "mean_latency": 11.187657315993713,
+      "std_latency": 0.6306636379830576,
+      "mean_steps": 9.0,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "total_chords_encountered": 0,
+      "mean_decision_ms": 0.6957322234046404,
+      "mean_slips_per_ep": 1.2666666666666666
+    },
+    "0.25": {
+      "mean_latency": 11.199906273196255,
+      "std_latency": 0.7590723136071309,
+      "mean_steps": 8.866666666666667,
+      "braess_trap_rate": 0.0,
+      "total_traps_taken": 0,
+      "total_chords_encountered": 1,
+      "mean_decision_ms": 0.7107834584653882,
+      "mean_slips_per_ep": 1.3
+    }
+  }
+}

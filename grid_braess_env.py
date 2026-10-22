@@ -35,13 +35,15 @@ class CongestedGridEnv:
         seed: Optional[int] = 42,
         s_bg: Tuple[int, int] = (0, 0),
         t_bg: Optional[Tuple[int, int]] = None,
-        allow_backward: bool = False
+        allow_backward: bool = False,
+        slip_prob: float = 0.0
     ):
         self.m = m
         self.n = n
         self.s_bg = s_bg
         self.t_bg = t_bg if t_bg is not None else (m, n)
         self.allow_backward = allow_backward
+        self.slip_prob = slip_prob
         self.grid = GridNetwork(m=m, n=n, a=a, b=b, q=q, s_bg=self.s_bg, t_bg=self.t_bg)
         self.p_chord = p_chord
         self.noise_std = noise_std
@@ -149,22 +151,35 @@ class CongestedGridEnv:
             # Invalid action penalty
             return self.agent_pos, 100.0, False, {"error": "Invalid action"}
 
+        # Stochastic actuator slip: with probability slip_prob, deviate to an alternative valid cardinal action
+        cardinal_alts = [a for a in valid_actions if a != self.ACTION_CHORD and a != action]
+        if self.slip_prob > 0.0 and action != self.ACTION_CHORD and len(cardinal_alts) > 0:
+            if self.rng.random() < self.slip_prob:
+                executed_action = int(self.rng.choice(cardinal_alts))
+                slipped = True
+            else:
+                executed_action = action
+                slipped = False
+        else:
+            executed_action = action
+            slipped = False
+
         i, j = self.agent_pos
         latency = 0.0
 
-        if action == self.ACTION_RIGHT:
+        if executed_action == self.ACTION_RIGHT:
             next_pos = (i + 1, j)
             e_idx = self._get_edge_index((i, j), next_pos)
             flow = self.current_edge_flows[e_idx]
             latency = self.grid.a * flow + self.grid.b
 
-        elif action == self.ACTION_DOWN:
+        elif executed_action == self.ACTION_DOWN:
             next_pos = (i, j + 1)
             e_idx = self._get_edge_index((i, j), next_pos)
             flow = self.current_edge_flows[e_idx]
             latency = self.grid.a * flow + self.grid.b
 
-        elif action == self.ACTION_UP:
+        elif executed_action == self.ACTION_UP:
             next_pos = (i - 1, j)
             # Edge in reverse: base edge is (next_pos -> (i, j))
             try:
@@ -174,7 +189,7 @@ class CongestedGridEnv:
             except ValueError:
                 latency = self.grid.b
 
-        elif action == self.ACTION_LEFT:
+        elif executed_action == self.ACTION_LEFT:
             next_pos = (i, j - 1)
             # Edge in reverse: base edge is (next_pos -> (i, j))
             try:
@@ -184,7 +199,7 @@ class CongestedGridEnv:
             except ValueError:
                 latency = self.grid.b
 
-        elif action == self.ACTION_CHORD:
+        elif executed_action == self.ACTION_CHORD:
             u_c, v_c, _, k = self.active_chord
             next_pos = v_c
             if self.chord_type == "braess":
@@ -208,6 +223,9 @@ class CongestedGridEnv:
         info = self._get_info()
         info["actual_latency"] = actual_latency
         info["nominal_latency"] = latency
+        info["intended_action"] = action
+        info["executed_action"] = executed_action
+        info["slipped"] = slipped
 
         return self.agent_pos, actual_latency, done, info
 

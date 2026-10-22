@@ -1,0 +1,207 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+
+% -----------------------------------------------------------------------------
+% Theme and Presentation Styling (Clean Academic Navy & Royal Blue)
+% -----------------------------------------------------------------------------
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+\definecolor{NavyMain}{RGB}{20, 46, 92}
+\definecolor{BlueAccent}{RGB}{37, 99, 235}
+\definecolor{LightBlueBg}{RGB}{240, 246, 255}
+\definecolor{CrimsonDanger}{RGB}{220, 38, 38}
+\definecolor{ForestGreen}{RGB}{22, 163, 74}
+\definecolor{SlateText}{RGB}{30, 41, 59}
+
+\setbeamercolor{palette primary}{bg=NavyMain, fg=white}
+\setbeamercolor{palette secondary}{bg=BlueAccent, fg=white}
+\setbeamercolor{palette tertiary}{bg=NavyMain!90, fg=white}
+\setbeamercolor{title}{bg=NavyMain, fg=white}
+\setbeamercolor{frametitle}{bg=NavyMain, fg=white}
+\setbeamercolor{structure}{fg=NavyMain}
+\setbeamercolor{block title}{bg=NavyMain!15, fg=NavyMain}
+\setbeamercolor{block body}{bg=LightBlueBg, fg=SlateText}
+\setbeamercolor{block title alerted}{bg=CrimsonDanger!15, fg=CrimsonDanger}
+\setbeamercolor{block body alerted}{bg=CrimsonDanger!5, fg=SlateText}
+\setbeamercolor{block title example}{bg=ForestGreen!15, fg=ForestGreen}
+\setbeamercolor{block body example}{bg=ForestGreen!5, fg=SlateText}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+
+% -----------------------------------------------------------------------------
+% Packages
+% -----------------------------------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath, amssymb, amsfonts, mathtools, bm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{microtype}
+
+% -----------------------------------------------------------------------------
+% Title Information
+% -----------------------------------------------------------------------------
+\title[SL-PS: Spectral-Laplacian Prioritized Sweeping]{Spectral-Laplacian Prioritized Sweeping (SL-PS)}
+\subtitle{Định tuyến Tác tử Thông minh trên Đồ thị Động Ghép nối Tắc nghẽn}
+\author[Author Team]{Báo cáo Tiến độ Nghiên cứu}
+\institute[Laboratory]{Department of Computer Science \& Artificial Intelligence}
+\date[\today]{Research Seminar}
+
+\begin{document}
+
+% =============================================================================
+% SLIDE 1: Title
+% =============================================================================
+\begin{frame}[plain]
+    \titlepage
+\end{frame}
+
+% =============================================================================
+% SLIDE 2: Hình thức hóa bài toán CC-DG-MDP
+% =============================================================================
+\begin{frame}{1. Hình thức hóa Bài toán: CC-DG-MDP}
+    \begin{block}{Congestion-Coupled Dynamic Graph MDP (CC-DG-MDP)}
+        Xây dựng quá trình quyết định Markov trên đồ thị động liên kết tắc nghẽn:
+        \[
+            \mathcal{M} = (\mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{C}, \gamma), \quad 
+            c(s, a) = \ell_e(f_e^*(E_t)) + \delta_{\text{detour}} \cdot \mathbb{I}_{a \in \{a_{\text{up}}, a_{\text{left}}\}} + \xi_t
+        \]
+    \end{block}
+    
+    \vspace{0.2cm}
+    \begin{columns}[T]
+        \begin{column}{0.55\textwidth}
+            \textbf{Các thành phần cốt lõi:}
+            \begin{itemize}
+                \item Dòng giao thông cân bằng $f_e^*(E_t)$ giải bài toán tối ưu thế Beckmann dưới ràng buộc topo động $E_t = E_0 \cup \{e^*\}$:
+                \[
+                    f^* = \arg\min_{f \in \mathcal{K}} \sum_{e \in E_t} \int_0^{f_e} \ell_e(x) \, dx
+                \]
+                \item $\delta_{\text{detour}}$: Chi phí phạt rẽ ngược hướng đích.
+                \item $\xi_t \sim \mathcal{N}(0, \sigma^2)$: Nhiễu động quan sát ngẫu nhiên.
+            \end{itemize}
+        \end{column}
+        
+        \begin{column}{0.42\textwidth}
+            \begin{alertblock}{Bản chất Thách thức}
+                \begin{itemize}
+                    \item Khi có cạnh mới $e^*$ xuất hiện, dòng cân bằng $f_e^*$ lập tức thay đổi toàn mạng.
+                    \item \textbf{Nghịch lý Braess}: Một đường tắt tưởng chừng có lợi ($c \approx 0$) lại dồn xe gây tắc nghẽn nghiêm trọng ở hạ lưu!
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =============================================================================
+% SLIDE 3: Hạn chế của RL truyền thống & Ý tưởng Phổ Đồ thị
+% =============================================================================
+\begin{frame}{2. Hạn chế của RL Truyền thống \& Ý tưởng Phổ Đồ thị}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \begin{alertblock}{Tại sao Prioritized Sweeping Bị Bẫy?}
+                \begin{itemize}
+                    \item Standard Prioritized Sweeping (Peng 1993) chỉ cập nhật số dư Bellman cục bộ từng bước ($K=15$).
+                    \item Tác tử nhìn thấy lối vào đường tắt chi phí $0$, nhưng \textbf{chưa kịp truyền độ trễ tắc nghẽn hạ lưu ngược về vị trí hiện tại}.
+                    \item \textbf{Hậu quả}: Tác tử lao vào bẫy nghẽn tới \alert{\textbf{50\% số lần gặp}}!
+                \end{itemize}
+            \end{alertblock}
+        \end{column}
+        
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Ý tưởng Cốt lõi: Nhận thức Phổ Toàn cục}
+                Làm sao để tác tử "cảm nhận" được ùn tắc phía trước mà không cần duyệt cạn tốn kém?
+                \begin{itemize}
+                    \item Sử dụng ma trận bước ngẫu nhiên đồ thị $P_{\text{rw}} = D^{-1}A$ và \textbf{Toán tử Green}:
+                    \[
+                        \mathcal{G}_{\text{out}} = (I - P_{\text{rw}} + \eta I)^{-1}
+                    \]
+                    \item Đóng vai trò như một \textbf{bộ lọc không gian} (spatial filter): khuếch tán biến động độ trễ $\Delta \ell$ từ nút nghẽn ngược dòng về tác tử \textbf{ngay lập tức (*zero-shot*)}.
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =============================================================================
+% SLIDE 4: Giải pháp: Toán tử Bellman Phổ-Laplacian (T_SL)
+% =============================================================================
+\begin{frame}{3. Giải pháp Đề xuất: Toán tử Bellman Phổ-Laplacian ($\mathcal{T}_{\text{SL}}$)}
+    \begin{block}{Toán tử Bellman Tích hợp Thế hiệu Phổ}
+        \[
+            \mathcal{T}_{\text{SL}} V(s) = \min_{a \in \mathcal{A}(s)} \left[ c(s, a) + \gamma \sum_{s'} \mathcal{P}(s' \mid s, a) V(s') + \beta \Phi_{\text{spec}}(s') \right]
+        \]
+    \end{block}
+    
+    \vspace{0.2cm}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Cơ chế Hoạt động Trực quan:}
+            \begin{itemize}
+                \item $\Phi_{\text{spec}} = \mathcal{G}_{\text{out}} |B \Delta \vec{\ell}|$ là \textbf{Thế hiệu phạt tắc nghẽn phổ}.
+                \item Trường phạt này tạo ra một "hàng rào đẩy vô hình" bao quanh các khu vực sắp quá tải.
+                \item Hệ số $\beta$ tự động điều chỉnh theo độ kết nối đại số của mạng lưới.
+            \end{itemize}
+        \end{column}
+        
+        \begin{column}{0.48\textwidth}
+            \begin{exampleblock}{Hiệu quả Trực tiếp}
+                \begin{itemize}
+                    \item Khi gặp đường tắt lừa đảo, khoản phạt phổ khiến giá trị hành động vào bẫy bị đẩy lên cao:
+                    \[
+                        Q^*_{\text{SL}}(u, a_{\text{chord}}) > Q^*_{\text{SL}}(u, a_{\text{bypass}})
+                    \]
+                    \item Tác tử \textbf{chủ động né bẫy ngay lập tức} mà không cần tăng ngân sách quét Bellman.
+                    \item Bảo đảm toán học tính co ngặt và hội tụ ổn định.
+                \end{itemize}
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% =============================================================================
+% SLIDE 5: Bằng chứng Thực nghiệm & Kết luận
+% =============================================================================
+\begin{frame}{4. Bằng chứng Thực nghiệm \& Kết luận}
+    \begin{columns}[T]
+        \begin{column}{0.50\textwidth}
+            \textbf{Thực nghiệm Đối sánh trên Lưới $G_{3,6}$ (30 Episodes):}
+            \begin{table}[h]
+                \centering
+                \small
+                \begin{tabular}{lccc}
+                    \toprule
+                    \textbf{Thuật toán} & \textbf{Ngân sách $K$} & \textbf{Độ trễ (s)} & \textbf{Tỷ lệ Sập bẫy} \\
+                    \midrule
+                    Standard-PS & 15 & $12.42 \pm 3.62$ & $50.0\%$ \\
+                    Standard-PS (Lớn) & 100 & $11.61 \pm 2.46$ & $28.6\%$ \\
+                    \midrule
+                    \textbf{SL-PS (Đề xuất)} & \textbf{15} & $\mathbf{11.03 \pm 0.70}$ & $\mathbf{0.0\%}$ \\
+                    \bottomrule
+                \end{tabular}
+            \end{table}
+            
+            \begin{exampleblock}{Hiệu năng Đột phá}
+                Đạt \textbf{0.0\% sập bẫy tuyệt đối} chỉ với $K=15$, tiết kiệm \textbf{85\% chi phí tính toán} so với Standard-PS ($K=100$).
+            \end{exampleblock}
+        \end{column}
+        
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Kết luận \& Đóng góp Chính}
+                \begin{enumerate}
+                    \item \textbf{Mô hình hóa}: Đề xuất thành công khung bài toán CC-DG-MDP mô tả chân thực tương tác giữa tác tử và dòng xe nền.
+                    \item \textbf{Ý tưởng mới}: Tích hợp toán tử phổ đồ thị vào Bellman để mang lại tầm nhìn toàn cục tức thời.
+                    \item \textbf{An toàn \& Tiết kiệm}: Tách rời tính an toàn (né bẫy $100\%$) khỏi ngân sách tính toán.
+                \end{enumerate}
+            \end{block}
+            
+            \vspace{0.1cm}
+            \centering
+            \textbf{\large Cảm ơn Thầy và các bạn đã lắng nghe!}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\end{document}
