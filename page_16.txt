@@ -1,0 +1,56 @@
+3.2 Prevalence
+Probabilistic, asymptotic prevalence results on Braess’ Paradox are known for random-graph and
+expander models [22, 3]; the grid structure permits an exact count. Specifically, we calculate the
+proportion of chords u → v with V < 0 and k > 0 for all grids with 1 ≤ m,n ≤ 100.
+uv
+Scalingaandq byconstantfactorsdoesnotchangethesignofthedesiredquantities; weassume
+a = q = 1.
+Using the spectral decomposition of the grid Laplacian L, we compute the single voltage vector
+ϕ = L+(e − e ). All voltage drops are then obtained from V = ϕ − ϕ . This allows us to
+s t uv u v
+calculate the matrix of voltage drops more efficiently than building the Laplacian and using built-
+in pseudoinverse functions.
+The path graph on N vertices is denoted by P . Its Laplacian L [20] has eigenvalues λ =
+N N r
+4sin2(cid:0)πr(cid:1)
+, r = 0,...,N −1, with orthonormal eigenvectors given by
+2N
+s 2−δ πr(i+ 1) !
+ψ (i) = r cos 2 , i = 0,...,N −1.
+r
+N N
+Here
+(
+1 if r = 0
+δ =
+r
+0 if r ̸= 0.
+The grid G is a Cartesian product of paths P □P , so its Laplacian is the Kronecker sum
+m,n m+1 n+1
+[15] L = L ⊗I +I ⊗L . If (ψ ,λ ) and (ξ ,µ ) are the eigenpairs of L and
+m+1 n+1 m+1 n+1 r1 r1 r2 r2 m+1
+L respectively, then the eigenpairs of L are (ψ ⊗ ξ ,λ + µ ) over all pairs (r ,r ). The
+n+1 r1 r2 r1 r2 1 2
+pseudoinverse inverts the nonzero eigenvalues while the (r ,r ) = (0,0) term is set to zero; writing
+1 2
+( (λ +µ )−1, (r ,r ) ̸= (0,0),
+Γ :=
+r1 r2 1 2
+r1,r2
+0, (r ,r ) = (0,0),
+1 2
+we have
+m n
+L+ = X X Γ (ψ ⊗ξ )(ψ ⊗ξ )T.
+r1,r2 r1 r2 r1 r2
+r1=0r2=0
+This lets us compute all possible voltage drops in O
+(cid:0) |V|2(cid:1)
+time. There are many chords where
+V = 0; occasionally these drops are returned as residuals of magnitude 10−14 due to floating-
+uv
+point errors. Meanwhile, chords genuinely capable of Braess’ Paradox carry drops many orders of
+magnitude larger. Therefore we treat voltage drops with absolute value at most 10−12 as zero; the
+classification is unchanged for any threshold in [10−14,10−10].
+The full algorithm is available in the accompanying repository [14].
+16

@@ -171,6 +171,14 @@ class GridNetwork:
         def grad(f):
             return self.a * f + self.b
 
+        # Exact analytical electrical solution when potential decreases monotonically (e.g. s=(0,0), t=(m,n))
+        f_elec = (1.0 / self.a) * (self.B.T @ self.phi_base)
+        if np.all(f_elec >= -1e-9) and np.allclose(self.B @ f_elec, self.p_base, atol=1e-6):
+            f_base = np.maximum(0.0, f_elec)
+            total_cost = float(np.sum(f_base * (self.a * f_base + self.b)))
+            self._base_cache = (f_base, total_cost)
+            return self._base_cache
+
         constraint = LinearConstraint(self.B[:-1], self.p_base[:-1], self.p_base[:-1])
         bounds = Bounds(0, np.inf)
 

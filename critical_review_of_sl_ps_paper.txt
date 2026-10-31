@@ -1,0 +1,259 @@
+================================================================================
+CRITICAL AUDIT & REVIEW: ERRORS IN TERMINOLOGY, MATHEMATICAL PROOFS, AND CLAIMS
+Paper: Spectral-Laplacian Prioritized Sweeping: Non-Stationary Planning in Congested Dynamic Networks
+Date of Review: October 27, 2026
+================================================================================
+
+TABLE OF CONTENTS
+--------------------------------------------------------------------------------
+1. EXECUTIVE SUMMARY & CORE CONCEPTUAL CONTRADICTION
+2. CRITICAL FLAWS IN MATHEMATICAL PROOFS (APPENDIX A & MAIN THEOREMS)
+   2.1. Proof of Theorem 6 (Part 3) & Appendix A.7: The Hand-Waving Heuristic
+   2.2. Appendix A.7 (Part 2) vs Section 4.3: In-Laplacian & Stochasticity Mismatch
+   2.3. Proof of Theorem 3 (Appendix A.4): Circular Dependency on V*
+   2.4. Lemma 3 (Appendix B): Misapplication of Weyl's Perturbation Theorem
+   2.5. Proof of Theorem 4 (Appendix A.5): Dubious Asymptotic Bounds
+3. TERMINOLOGY ERRORS, MISNOMERS, AND SCIENTIFIC OVERCLAIMING
+   3.1. The "Exact 0.0% Trap Rate" Claim vs Sample Size
+   3.2. Prioritized Sweeping Claim vs Decision Rule Masking
+   3.3. Confusing Matrix Classifications (Row- vs Column-Stochastic)
+   3.4. Mischaracterization of Baseline Dijkstra
+4. NOTATION INCONSISTENCIES, TYPOS, AND FORMATTING DEFECTS
+5. ACTIONABLE RECOMMENDATIONS FOR THE AUTHORS
+================================================================================
+
+
+--------------------------------------------------------------------------------
+1. EXECUTIVE SUMMARY & CORE CONCEPTUAL CONTRADICTION
+--------------------------------------------------------------------------------
+The paper presents a severe structural contradiction between its algorithmic 
+claim (Prioritized Sweeping via smart queue scheduling) and its theoretical/
+empirical reality (static penalty masking):
+
+- THE SCHEDULING CLAIM: The paper markets itself as an advance in Prioritized 
+  Sweeping (PS). It claims that by modifying the priority queue keys using the 
+  backward in-Laplacian Green operator G_in, it eliminates "Priority Inversion" 
+  and updates upstream decision nodes before allocating backup budget to chord 
+  entrances.
+- THE VALUE PENALTY REALITY: In Section 4.2 (Eq. 20) and Appendix A.4 (Eq. 72-76), 
+  the spectral congestion penalty beta(sigma)*Phi_spec is injected directly 
+  into the argmin policy operator:
+      pi(s) = argmin_a [ c(s, a) + gamma * V(s') + beta(sigma) * Phi_spec(s') ]
+- THE CONTRADICTION: If the policy decision rule at state s or u* directly 
+  penalizes chord entry via beta(sigma)*Phi_spec such that Q(chord) > Q(bypass), 
+  the agent avoids the trap even when the backup budget K = 0 (no queue updates 
+  at all!). 
+  Therefore, the priority queue scheduling p_SL(s) >= p_SL(u*) analyzed at great 
+  length in Part 3 of Theorem 6 is completely superfluous to avoiding the trap. 
+  The paper simultaneously claims that the queue schedule avoids the trap 
+  (Part 3) while proving that the static penalty avoids the trap regardless of 
+  the queue (Theorem 3, Theorem 6 Part 4).
+
+
+--------------------------------------------------------------------------------
+2. CRITICAL FLAWS IN MATHEMATICAL PROOFS (APPENDIX A & MAIN THEOREMS)
+--------------------------------------------------------------------------------
+
+2.1. Proof of Theorem 6 (Part 3) & Appendix A.7: The Hand-Waving Heuristic
+------------------------------------------------------------------------
+- Problem 1: Unsubstantiated "Neutralization" and O(1) Leap.
+  In earlier drafts/variants (Eq. 129 in draft; Eq. 127-129 in current text), 
+  the author claims that:
+      T_SL V(u*) - V(u*) = beta(sigma) * Phi_spec(s_bypass)
+  This equality explicitly assumes that prior to chord emergence, the network 
+  was in a static equilibrium where V(u*) = c(u*, a_bypass) + gamma * V(s_bypass), 
+  and that upon chord arrival, NO local updates occurred except the addition of 
+  the penalty. This ignores dynamic non-stationarity and relies on an ideal, 
+  unperturbed pre-state.
+- Problem 2: Explosive Scaling of beta_0* in Eq. (134).
+  The paper states:
+      beta_0 >= beta_0* := |T_SL V(u*) - V(u*)| / f_in(s)
+  However, in Eq. (118) / (123), the author proves that f_in(s) is lower-bounded 
+  by a quantity decaying exponentially with distance m:
+      f_in(s) >= Delta_0 / [ (1 + eta)^(m+1) * (d_out_max)^m ]
+  If upstream state s is far from the bottleneck (e.g., m = diam(G)), f_in(s) 
+  is exponentially small. Consequently, to ensure p_SL(s) >= p_SL(u*), beta_0* 
+  must explode exponentially:
+      beta_0* = Omega( (d_out_max)^m * (1 + eta)^m )
+  If such a massive beta_0 is chosen, the Bellman dynamic programming operator 
+  T_SL is utterly dominated by the spectral potential, destroying the discount 
+  optimality of travel time across the entire graph. The author sweeps this 
+  scaling dependency under the rug by merely declaring "there exists a finite 
+  beta_0* < infty".
+- Problem 3: Two-Node Special Case Claimed as Global Immunity.
+  Part 3 analyzes strictly two isolated nodes: the chord entrance u* and a 
+  single upstream state s. It does not prove a monotonic topological priority 
+  ordering across all intermediate ancestors on arbitrary directed graphs.
+
+2.2. Appendix A.7 (Part 2) vs Section 4.3: In-Laplacian & Stochasticity Mismatch
+--------------------------------------------------------------------------------
+- In Section 4.3 (Eq. 21) and Section 4.1:
+      L_in = D_in - P^T,   G_in = (D_in - P^T + eta * I)^(-1)
+  where D_in = diag(P^T * 1).
+- In Appendix A.7, Eq. (115):
+      f_in = G_in * xi_div = ((1 + eta)I - P)^(-1) * xi_div
+  * Error A: The matrix P is used instead of P^T. The in-Laplacian Green operator 
+    propagates signals upstream, which requires P^T (the reverse random walk). 
+    Writing ((1 + eta)I - P)^(-1) means forward propagation along outgoing edges!
+  * Error B: D_in is silently replaced by I. For general directed graphs, 
+    the in-degree matrix D_in != I unless the graph is in-regular. Replacing 
+    (D_in - P^T + eta * I) with ((1 + eta)I - P^T) is mathematically invalid 
+    for general directed networks.
+  * Error C: P is row-stochastic, so P^T is column-stochastic. While the Neumann 
+    series converges because rho(P^T) = rho(P) <= 1, Eq. (115) incorrectly 
+    writes P instead of P^T, reversing the mathematical direction of the proof.
+
+2.3. Proof of Theorem 3 (Appendix A.4): Circular Dependency on V*
+-----------------------------------------------------------------
+- The threshold condition for beta_0 in Eq. (79) is:
+      beta_0 >= [ c(u, a_bypass) - c(u, a_chord) + gamma * (V*_SL(s_bypass) - V*_SL(v)) ] 
+                / [ (1 + sigma(P)) * (Phi_spec(v) - Phi_spec(s_bypass)) ]
+- Fatal circularity: The lower bound for beta_0 depends on the fixed point 
+  V*_SL itself! 
+  However, V*_SL is the fixed point of operator T_SL, which is parameterized 
+  by beta_0. You cannot define the threshold for a parameter beta_0 based on an 
+  unknown value function V*_SL that itself depends on beta_0. The author provides 
+  no fixed-point Lipschitz contraction argument proving the existence of an 
+  independent, non-circular threshold.
+
+2.4. Lemma 3 (Appendix B): Misapplication of Weyl's Perturbation Theorem
+-----------------------------------------------------------------------
+- In Appendix B, Page 38:
+  "By Weyl's Perturbation Theorem [2, 15], for any matrix perturbation A + E, 
+   the singular values and eigenvalues of the symmetric part satisfy 
+   |lambda_i(P_t) - lambda_i(P_0)| <= ||Delta P||_2."
+- Fact: Weyl's Inequality holds ONLY for Hermitian (symmetric) matrices!
+  The transition matrix P on a general directed graph G is asymmetric 
+  (non-Hermitian). For general asymmetric matrices, eigenvalues can be 
+  notoriously sensitive to perturbations (governed by the Bauer-Fike Theorem, 
+  which involves the condition number of the eigenvector matrix kappa(X)).
+  Applying Weyl's theorem directly to the eigenvalues of an asymmetric random-walk 
+  transition matrix is a textbook mathematical error.
+
+2.5. Proof of Theorem 4 (Appendix A.5): Dubious Asymptotic Bounds
+----------------------------------------------------------------
+- Part 2 of Theorem 4 assumes that the number of encountered traps scales as 
+  E[N_traps] = Theta(diam(G)), and that Standard-PS commits to each trap with 
+  independent probability p_0 > 0.
+- Fallacy: Traps cannot be treated as independent Bernoulli trials along an 
+  expanding grid when the agent is trapped in early stages. If the agent is 
+  trapped at step 1, its trajectory is fundamentally deflected from the nominal 
+  path where subsequent candidate traps were assumed to spawn. 
+  Summing independent expectations along a single fixed nominal trajectory 
+  violates the dynamic branching of reinforcement learning rollouts.
+
+
+--------------------------------------------------------------------------------
+3. TERMINOLOGY ERRORS, MISNOMERS, AND SCIENTIFIC OVERCLAIMING
+--------------------------------------------------------------------------------
+
+3.1. The "Exact 0.0% Trap Rate" Claim vs Sample Size
+---------------------------------------------------
+- Locations: Abstract, Section 1.2, Section 5, Section 6.2, Figure 2 caption.
+- Critique: 
+  The paper uses the phrase: "SL-PS achieves an exact 0.0% trap rate at K = 0".
+  In statistics and empirical science, observing 0 occurrences out of N = 30 
+  trials (or even N = 180 trials) NEVER proves an "exact 0.0% probability".
+  The 95% Wilson confidence interval for 0/30 is [0.0%, 9.5%], and for 0/180 
+  is [0.0%, 2.06%]. 
+  While the authors added the Wilson CI in parentheses, repeatedly claiming 
+  "deterministic/exact 0.0% rate" in empirical sections conflates an empirical 
+  sample frequency (0 successes in sample) with a deterministic mathematical 
+  guarantee.
+
+3.2. Prioritized Sweeping Claim vs Decision Rule Masking
+-------------------------------------------------------
+- Terminology Issue: The paper titles the method "Spectral-Laplacian Prioritized 
+  Sweeping".
+- Reality: A Prioritized Sweeping algorithm is defined by its selective update 
+  of value functions in a priority queue. However, as demonstrated in Theorem 3, 
+  Table 3, and Figure 3(d), the entire trap avoidance capability is achieved by 
+  modifying the reward/policy objective with a static penalty beta*Phi_spec. 
+  Even at K = 0 (when ZERO Prioritized Sweeping takes place), the agent avoids 
+  the trap. 
+  Calling this an achievement of "Prioritized Sweeping" is a misnomer; it is 
+  reward shaping / potential-augmented action selection.
+
+3.3. Confusing Matrix Classifications (Row- vs Column-Stochastic)
+----------------------------------------------------------------
+- On Page 8, Eq. (16), P is defined as row-stochastic (P * 1 = 1).
+- In Section 4.3 and Appendix A.7, P^T is described as an in-Laplacian component. 
+  In multiple places, the text refers to "stochastic matrix P^T" without 
+  specifying that P^T is column-stochastic, not row-stochastic. 
+  Furthermore, in Eq. (115), the author mixes up P and P^T in the backward 
+  resolvent definition.
+
+3.4. Mischaracterization of Baseline Dijkstra
+--------------------------------------------
+- In Table 1, Greedy-Dijkstra gets 0.0% trap rate (matching SL-PS).
+- The author labels Greedy-Dijkstra as an "Oblivious Boundary Hugger" whose 
+  success is "purely a fortuitous topological artifact of its static Manhattan 
+  tie-breaking rule."
+- Critique: This explanation is biased. Dijkstra avoids the trap because the 
+  nominal free-flow distance along the boundary without congestion is already 
+  competitive. If Dijkstra on nominal costs avoids the trap, then the trap is 
+  not universally attracting all shortest-path planners. Dismissing a classical 
+  baseline's matching performance as a "fortuitous artifact" while exalting 
+  SL-PS's zero rate exposes author confirmation bias.
+
+
+--------------------------------------------------------------------------------
+4. NOTATION INCONSISTENCIES, TYPOS, AND FORMATTING DEFECTS
+--------------------------------------------------------------------------------
+1. Typo in Operator Subscript (Page 3, Section 1):
+   - "formulate a novel Spectral-Laplacian Bellman Operator T_SL... Rather than 
+     relying on local heuristics, T_S1 couples transition values..."
+   - Text writes "T_S1" (with numeral 1) instead of "T_SL" (with letter L).
+
+2. Missing Reference Citation Key (Page 15, Page 21):
+   - "Under the statistical Rule of Three [?], the upper 95% confidence limit..."
+   - A broken LaTeX reference "[?]" appears in both Section 6.1 and Section 6.5.
+
+3. Missing Parenthesis / Formatting Glitch in Abstract:
+   - "bounded by [0.0%, 2.06%) across 180 stochastic trials" (closing bracket 
+     is parenthesis instead of square bracket).
+   - Page 2: "khoảng tin cậy Wilson 95" (Vietnamese abstract cuts off mid-sentence 
+     without finishing the percentage or closing parenthesis).
+
+4. Broken LaTeX Subscripts:
+   - Page 13, Eq. (32): "Radiusps PS(K) <= K" (corrupted subscript).
+   - Page 35, Eq. (119): "RadiussLPS}(0) = diam(G)" (unmatched closing brace '}' 
+     and mangled subscript).
+
+5. Inconsistent Norm Notation:
+   - Equation (98) Page 32: Prints as "spec - spec <= ||Gout|| ||divdiv" 
+     due to failed LaTeX compilation of subscripts.
+
+6. Formula Mislabeling in Proposition 1 (Page 39):
+   - Equation (150) lists complexity as O(|E_0| + |V| + K * log|V|), but Step 2 
+     in the text admits that evaluating G_out * xi_div requires O(|V|^2) 
+     dense operations unless using iterative sparse solvers. This O(|V|^2) 
+     term is omitted from the final O() expression in Eq. (150).
+
+
+--------------------------------------------------------------------------------
+5. ACTIONABLE RECOMMENDATIONS FOR THE AUTHORS
+--------------------------------------------------------------------------------
+1. Decouple Theoretical Claims:
+   Admit honestly that Braess trap immunity is an intrinsic property of the 
+   Spectral Potential Reward Augmentation (T_SL), NOT of the Prioritized 
+   Sweeping queue. Re-frame the paper around "Spectral Congestion Potential 
+   Augmented Reinforcement Learning" rather than claiming PS queue order is 
+   what stops the agent from entering the trap.
+
+2. Fix Appendix A.7 and Part 3:
+   Remove the erroneous claim that queue priority inversion elimination is 
+   necessary for trap immunity. Replace the hand-waving O(1) bounds in Eq. (127) 
+   with rigorous upper and lower operator bounds, or delete Part 3 entirely 
+   since Part 4 already concedes that route safety is decoupled from queue order.
+
+3. Correct Linear Algebra in Appendix B:
+   Replace the reference to Weyl's Perturbation Theorem for asymmetric matrices. 
+   Use the Bauer-Fike Theorem or pseudospectra bounds for non-normal matrices, 
+   or restrict the lemma to normal / reversible transition kernels.
+
+4. Moderate Scientific Language:
+   Replace "exact 0.0% trap rate" with "0% empirical trap encounter rate across 
+   N trials (Wilson 95% CI: [0.0%, 2.06%])". Remove hyperbolic phrases like 
+   "strictly eliminated", "complete immunity", and "rock-solid".
+================================================================================

@@ -1,0 +1,29 @@
+\documentclass[aspectratio=169, 10pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{amsmath, amssymb, amsfonts, amsthm}
+\usepackage{bm}
+
+\definecolor{MarpCardBorder}{RGB}{226, 232, 240}
+
+\setbeamertemplate{headline}{
+    \vskip2pt
+    \hspace{10pt}{\tiny\textbf{HEADLINE}}\hfill
+    \vskip1pt{\color{MarpCardBorder}\hrule height 0.5pt}\vskip1pt
+}
+
+\begin{document}
+\begin{frame}{Test Math Glyphs}
+Flow: traffic, flux, flow.
+Equation: $\Delta \vec{f} = f_{\text{aug}, E_0}^* - f_{\text{base}}^*$
+Equation 2: $\Delta \vec{\ell} = \operatorname{diag}(a_e) \Delta \vec{f}$
+Divergence: $\xi_{\text{div}} = |B \Delta \vec{\ell}| \in \mathbb{R}^{|V|}$
+Expansion: $\xi_{\text{div}}(v) = \left| \sum_{v \to w} a_e \Delta f_e - \sum_{u \to v} a_e \Delta f_e \right|$
+Omega: $\Omega(q)$, $\Omega(q \cdot \operatorname{diam}(G))$
+Beta: $\beta_{\min}^* \to 0$
+Inequalities: $\le, \ge, \to, \infty$
+Resolvent: $\|\Phi(P) - \Phi(P_{\pi^*})\|_\infty \le \frac{\gamma}{(1-\gamma)^2} \|\xi\|_\infty \epsilon_P$
+\end{frame}
+\end{document}

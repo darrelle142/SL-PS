@@ -1,0 +1,53 @@
+Corollary 3.2 (Demand threshold). Suppose γ < 0. If bk ≤ d, then the chord is unused for
+uv
+every demand q > 0. If bk > d, then the chord carries positive flow if and only if
+bk−d
+q < .
+−γ
+uv
+Consequently, a chord with negative original-grid voltage cannot induce Braess’ Paradox once the
+demand reaches this threshold.
+Proof. By Corollary 2.11, the chord is used precisely when
+qγ +bk > d.
+uv
+If bk ≤ d, this is impossible because γ < 0. If bk > d, rearranging gives
+uv
+bk−d
+q < .
+−γ
+uv
+An unused chord does not alter the equilibrium and therefore cannot induce the paradox.
+The first-region formula also gives an exact parameter range in which the paradox is completely
+determined.
+Corollary 3.3 (First-region parameter window). Suppose V < 0 and k > 0. The equilibrium flow
+uv
+lies in the first region
+0 < z∗ < z
+if and only if
+d−V < bk < d−V +(R +c)z.
+uv uv uv
+Whenever these inequalities hold, the chord induces Braess’ Paradox, and
+(−V )(V +bk−d)
+uv uv
+C −C = .
+new old
+R +c
+uv
+Proof. In the first flow region,
+V +bk−d
+z∗ = uv .
+R +c
+uv
+Since R +c > 0, the condition
+uv
+0 < z∗ < z
+is equivalent to
+0 < V +bk−d < (R +c)z,
+uv uv
+whichgivesthedisplayedinequalities. BecauseV < 0,Theorem2.13showsthatthechordinduces
+uv
+Braess’ Paradox. Substituting the formula for z∗ into
+C −C = −V z∗
+new old uv
+gives the result.
+15

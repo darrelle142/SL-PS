@@ -1,0 +1,54 @@
+Choose any ε satisfying
+0 < ε < R z.
+uv
+Here R must be positive as u ̸= v.
+uv
+Set
+−V +ε
+uv
+c = 0, d = 0, b =
+k
+so that
+(cid:18)−V +ε(cid:19)
+uv
+V +bk−d = V +k
+uv uv
+k
+= ε > 0.
+Hence the chord attracts positive flow. Its first-region equilibrium candidate is
+V +bk−d ε
+uv
+z = = .
+cand
+R +c R
+uv uv
+As this expression is strictly less than z, the equilibrium lies inside the first region, and
+ε
+z∗ = .
+R
+uv
+Theorem 2.13 now gives
+(−V )ε
+C −C = −V z∗ = uv > 0.
+new old uv
+R
+uv
+Thus the chord induces Braess’ Paradox.
+3 Consequences of the Braess Criterion
+3.1 Harmful Chords
+Let the additional edge u → v be a shortcut if its endpoints satisfy
+i′ ≥ i and j′ ≥ j,
+where u = (i,j) and v = (i′,j′). By repeatedly applying Lemma 2.7, such a chord has a positive
+voltage drop V and therefore does not satisfy the Braess criterion.
+uv
+Observation 3.1. A shortcut chord cannot induce Braess’ Paradox, nor can any chord with level
+gain k ≤ 0. Hence only chords moving forward in one coordinate and backward in another can
+produce the paradox.
+Theedge-usageconditiongivesathresholdinthetotaldemand. Definetheunit-demandvoltage
+coefficient
+γ := (e −e )TL+(e −e ),
+uv s t u v
+so that
+V = qγ .
+uv uv
+14

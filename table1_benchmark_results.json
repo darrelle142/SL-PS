@@ -1,0 +1,400 @@
+{
+  "table1": [
+    {
+      "name": "Myopic Dijkstra",
+      "trap_rate": 100.0,
+      "traps_taken": 144,
+      "chords_encountered": 144,
+      "mean_latency": 400.81313529647656,
+      "std_latency": 137.3206401886544,
+      "mean_value_error": null,
+      "std_value_error": null,
+      "mean_step_time_ms": 0.004316870772744106
+    },
+    {
+      "name": "Dyna-Q (K=5)",
+      "trap_rate": 100.0,
+      "traps_taken": 134,
+      "chords_encountered": 134,
+      "mean_latency": 380.3350841754304,
+      "std_latency": 131.9565636117685,
+      "mean_value_error": 125.4518523006957,
+      "std_value_error": 57.24036394398661,
+      "mean_step_time_ms": 0.05735663492109526
+    },
+    {
+      "name": "Standard-PS",
+      "trap_rate": 89.39393939393939,
+      "traps_taken": 118,
+      "chords_encountered": 132,
+      "mean_latency": 342.54007685998226,
+      "std_latency": 140.9309666232031,
+      "mean_value_error": 54.67555921595872,
+      "std_value_error": 30.41852589948821,
+      "mean_step_time_ms": 1.627085995868286
+    },
+    {
+      "name": "GTA-PS",
+      "trap_rate": 89.85507246376811,
+      "traps_taken": 124,
+      "chords_encountered": 138,
+      "mean_latency": 352.41563033315947,
+      "std_latency": 135.58432259122472,
+      "mean_value_error": 78.45299722952022,
+      "std_value_error": 46.40870433348237,
+      "mean_step_time_ms": 2.297694202498737
+    },
+    {
+      "name": "SL-PS (P_unif, K=0)",
+      "trap_rate": 0.0,
+      "traps_taken": 0,
+      "chords_encountered": 152,
+      "mean_latency": 182.36326376240737,
+      "std_latency": 37.80907989149299,
+      "mean_value_error": 22.879058956852806,
+      "std_value_error": 2.6523239546028163,
+      "mean_step_time_ms": 0.1476866829659129
+    },
+    {
+      "name": "SL-PS (P_unif, K=5)",
+      "trap_rate": 0.0,
+      "traps_taken": 0,
+      "chords_encountered": 157,
+      "mean_latency": 106.1291876253644,
+      "std_latency": 8.371824404317355,
+      "mean_value_error": 10.38633463979524,
+      "std_value_error": 6.107241930622272,
+      "mean_step_time_ms": 0.9728909827855637
+    },
+    {
+      "name": "SL-PS (P_flow, K=5)",
+      "trap_rate": 0.0,
+      "traps_taken": 0,
+      "chords_encountered": 154,
+      "mean_latency": 105.16444270980861,
+      "std_latency": 7.5784560902474345,
+      "mean_value_error": 5.594032670073022,
+      "std_value_error": 5.877714087078545,
+      "mean_step_time_ms": 0.9134597332048856
+    }
+  ],
+  "experiment2_budget_sweep": {
+    "budgets": [
+      0,
+      2,
+      5,
+      10,
+      20,
+      50
+    ],
+    "Standard-PS": [
+      {
+        "name": "Standard-PS",
+        "trap_rate": 100.0,
+        "traps_taken": 132,
+        "chords_encountered": 132,
+        "mean_latency": 378.00529107330715,
+        "std_latency": 133.09102895981442,
+        "mean_value_error": 125.55219159732489,
+        "std_value_error": 57.25859329065293,
+        "mean_step_time_ms": 0.005722433582164147
+      },
+      {
+        "name": "Standard-PS",
+        "trap_rate": 100.0,
+        "traps_taken": 136,
+        "chords_encountered": 136,
+        "mean_latency": 385.70478578173226,
+        "std_latency": 138.71610418736444,
+        "mean_value_error": 84.68296390167056,
+        "std_value_error": 42.88317848454,
+        "mean_step_time_ms": 1.6124379033641782
+      },
+      {
+        "name": "Standard-PS",
+        "trap_rate": 89.39393939393939,
+        "traps_taken": 118,
+        "chords_encountered": 132,
+        "mean_latency": 342.54007685998226,
+        "std_latency": 140.9309666232031,
+        "mean_value_error": 54.67555921595872,
+        "std_value_error": 30.41852589948821,
+        "mean_step_time_ms": 1.6375858267863348
+      },
+      {
+        "name": "Standard-PS",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 149,
+        "mean_latency": 129.53062155310164,
+        "std_latency": 27.13338340289941,
+        "mean_value_error": 13.856375514803835,
+        "std_value_error": 6.527241763019198,
+        "mean_step_time_ms": 1.6860808854843108
+      },
+      {
+        "name": "Standard-PS",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 157,
+        "mean_latency": 107.6311226318945,
+        "std_latency": 8.735002567507726,
+        "mean_value_error": 2.25833722345809,
+        "std_value_error": 1.8284454406397996,
+        "mean_step_time_ms": 1.6775942094059435
+      },
+      {
+        "name": "Standard-PS",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 159,
+        "mean_latency": 109.16198613117939,
+        "std_latency": 9.896591977631724,
+        "mean_value_error": 0.7313702616662525,
+        "std_value_error": 0.8932990554462253,
+        "mean_step_time_ms": 1.8004846580945408
+      }
+    ],
+    "SL-PS (P_unif)": [
+      {
+        "name": "SL-PS (P_unif, K=0)",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 152,
+        "mean_latency": 182.36326376240737,
+        "std_latency": 37.80907989149299,
+        "mean_value_error": 22.879058956852806,
+        "std_value_error": 2.6523239546028163,
+        "mean_step_time_ms": 0.11722910009051618
+      },
+      {
+        "name": "SL-PS (P_unif, K=2)",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 152,
+        "mean_latency": 182.36326376240737,
+        "std_latency": 37.80907989149299,
+        "mean_value_error": 12.28832838943157,
+        "std_value_error": 4.434411002909702,
+        "mean_step_time_ms": 0.9146496656250237
+      },
+      {
+        "name": "SL-PS (P_unif, K=5)",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 157,
+        "mean_latency": 106.1291876253644,
+        "std_latency": 8.371824404317355,
+        "mean_value_error": 10.38633463979524,
+        "std_value_error": 6.107241930622272,
+        "mean_step_time_ms": 0.9640734117026307
+      },
+      {
+        "name": "SL-PS (P_unif, K=10)",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 154,
+        "mean_latency": 105.16444270980861,
+        "std_latency": 7.5784560902474345,
+        "mean_value_error": 6.42601631004628,
+        "std_value_error": 5.765537409069904,
+        "mean_step_time_ms": 0.9275923665747958
+      },
+      {
+        "name": "SL-PS (P_unif, K=20)",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 154,
+        "mean_latency": 105.19215855999917,
+        "std_latency": 7.568113783714442,
+        "mean_value_error": 3.8024296745205124,
+        "std_value_error": 6.2448279397325805,
+        "mean_step_time_ms": 0.9273958550382428
+      },
+      {
+        "name": "SL-PS (P_unif, K=50)",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 154,
+        "mean_latency": 105.19215855999917,
+        "std_latency": 7.568113783714442,
+        "mean_value_error": 2.7648184325731067,
+        "std_value_error": 6.428080971049167,
+        "mean_step_time_ms": 0.9640853103972826
+      }
+    ],
+    "SL-PS (P_flow)": [
+      {
+        "name": "SL-PS (P_flow, K=0)",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 152,
+        "mean_latency": 182.36326376240737,
+        "std_latency": 37.80907989149299,
+        "mean_value_error": 20.732544461090484,
+        "std_value_error": 2.574906939969124,
+        "mean_step_time_ms": 0.12283850931694161
+      },
+      {
+        "name": "SL-PS (P_flow, K=2)",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 152,
+        "mean_latency": 182.36326376240737,
+        "std_latency": 37.80907989149299,
+        "mean_value_error": 10.510256041954262,
+        "std_value_error": 5.045224225330462,
+        "mean_step_time_ms": 0.9186952191124883
+      },
+      {
+        "name": "SL-PS (P_flow, K=5)",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 154,
+        "mean_latency": 105.16444270980861,
+        "std_latency": 7.5784560902474345,
+        "mean_value_error": 5.594032670073022,
+        "std_value_error": 5.877714087078545,
+        "mean_step_time_ms": 1.0525775618529611
+      },
+      {
+        "name": "SL-PS (P_flow, K=10)",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 154,
+        "mean_latency": 105.19215855999917,
+        "std_latency": 7.568113783714442,
+        "mean_value_error": 3.9478054540683836,
+        "std_value_error": 6.213714423582869,
+        "mean_step_time_ms": 0.9099660692281331
+      },
+      {
+        "name": "SL-PS (P_flow, K=20)",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 154,
+        "mean_latency": 105.19215855999917,
+        "std_latency": 7.568113783714442,
+        "mean_value_error": 3.0942308623780814,
+        "std_value_error": 6.371714714478158,
+        "mean_step_time_ms": 0.9240965710899496
+      },
+      {
+        "name": "SL-PS (P_flow, K=50)",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 154,
+        "mean_latency": 105.19215855999917,
+        "std_latency": 7.568113783714442,
+        "mean_value_error": 2.7508823685830506,
+        "std_value_error": 6.4307047032077325,
+        "mean_step_time_ms": 0.9992044013205195
+      }
+    ]
+  },
+  "experiment3_lipschitz": {
+    "deltas": [
+      0.0,
+      0.1,
+      0.2,
+      0.3,
+      0.35,
+      0.45,
+      0.6
+    ],
+    "metrics": [
+      {
+        "name": "SL-PS (P_flow, K=5)",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 154,
+        "mean_latency": 105.16444270980861,
+        "std_latency": 7.5784560902474345,
+        "mean_value_error": 5.594032670073022,
+        "std_value_error": 5.877714087078545,
+        "mean_step_time_ms": 0.9661443130977712
+      },
+      {
+        "name": "SL-PS (P_flow, K=5)",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 178,
+        "mean_latency": 102.78661847454674,
+        "std_latency": 6.859681370957757,
+        "mean_value_error": 5.731661946998095,
+        "std_value_error": 6.481184835948358,
+        "mean_step_time_ms": 1.0541537317117877
+      },
+      {
+        "name": "SL-PS (P_flow, K=5)",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 177,
+        "mean_latency": 102.86021110801462,
+        "std_latency": 6.832256421833932,
+        "mean_value_error": 6.419659527916569,
+        "std_value_error": 6.516368764664295,
+        "mean_step_time_ms": 1.0617765335409934
+      },
+      {
+        "name": "SL-PS (P_flow, K=5)",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 178,
+        "mean_latency": 102.78661847454674,
+        "std_latency": 6.859681370957757,
+        "mean_value_error": 7.2783773509689444,
+        "std_value_error": 6.562701847376409,
+        "mean_step_time_ms": 1.0827151843744705
+      },
+      {
+        "name": "SL-PS (P_flow, K=5)",
+        "trap_rate": 0.0,
+        "traps_taken": 0,
+        "chords_encountered": 178,
+        "mean_latency": 102.78661847454674,
+        "std_latency": 6.859681370957757,
+        "mean_value_error": 7.765392667645921,
+        "std_value_error": 6.615196255119841,
+        "mean_step_time_ms": 1.0760687118130003
+      },
+      {
+        "name": "SL-PS (P_flow, K=5)",
+        "trap_rate": 17.532467532467532,
+        "traps_taken": 27,
+        "chords_encountered": 154,
+        "mean_latency": 157.2084402418238,
+        "std_latency": 76.48780930214603,
+        "mean_value_error": 33.984931685004156,
+        "std_value_error": 40.836801809198995,
+        "mean_step_time_ms": 1.1788780109820332
+      },
+      {
+        "name": "SL-PS (P_flow, K=5)",
+        "trap_rate": 53.79310344827586,
+        "traps_taken": 78,
+        "chords_encountered": 145,
+        "mean_latency": 260.30322968821764,
+        "std_latency": 119.88103963560651,
+        "mean_value_error": 72.32393454693093,
+        "std_value_error": 46.54659402065744,
+        "mean_step_time_ms": 1.1429031255829614
+      }
+    ]
+  },
+  "experiment4_sioux_falls": {
+    "online_convex_ms": 35.747569997329265,
+    "closed_form_ms": 0.020484500273596495,
+    "speedup_ratio": 1745.1033474029196,
+    "std_ps_mean_lat": 57.3745857363665,
+    "std_ps_std_lat": 10.930362760761184,
+    "std_ps_trap_rate": 84.0,
+    "gta_ps_mean_lat": 61.76031270108957,
+    "gta_ps_std_lat": 7.827899022332396,
+    "gta_ps_trap_rate": 94.0,
+    "sl_ps_mean_lat": 31.92782466846227,
+    "sl_ps_std_lat": 0.7124618377781015,
+    "sl_ps_trap_rate": 0.0,
+    "latency_reduction_pct": 44.35197351111324
+  }
+}
